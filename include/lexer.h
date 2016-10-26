@@ -3,14 +3,27 @@
 #include <vector>
 #include <iostream>
 #include <functional>
+#include <mutex>
 #include "symtable.h"
 #include "lexer_base.h"
 //Buffer de carácteres
-using CharBuffer = Vector<charT>;
-//Funcion de recepción de carácteres
-using StreamFun = std::function<unsigned (CharBuffer&)>;
 //Funcion de prueba de recepcion de caracteres
 unsigned streamTestFun (std::istream& ,CharBuffer &buffer);
 //Funcion que hace el analisis lexico propiamente
 void lex_stream (StreamFun read,  TokenPusher& write_to, Context& tables);
+
+class TokenFilter{
+  Context* context;
+  TokenPusher* write_to;
+  std::mutex mux;
+  StreamFun read;
+public:
+  void setContext(Context&);
+  void setBuilder(TokenPusher&);
+  void setSource(StreamFun);
+  static void callback(void* ref);
+  void run();
+  TokenHandle handle();
+};
+
 #endif

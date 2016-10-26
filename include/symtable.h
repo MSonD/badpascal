@@ -5,26 +5,7 @@
 #include "lexer_base.h"
 
 
-/* class Vector
-{
-public:
-  T& operator[](unsigned index)
-  {
-    return impl[index];
-  }
-  unsigned push_back(T&& in)
-  {
-      impl.push_back(std::move(in));
-      return impl.size();
-  }
-  size_t size()
-  {
-    return impl.size();
-  }
-private:
-  std::vector<T> impl; //TODO: REPLACE
-};
-*/
+
 class TableEntry{
 public:
   std::string string;
@@ -50,6 +31,7 @@ public:
   virtual void Special(unsigned type, unsigned subtype) = 0;
   void AutoString (unsigned type, long id, const std::string& string, Context &tables);
   virtual void Endl() = 0;
+  virtual TokenBuffer& result() = 0;
 };
 
 #endif // SYMTABLE_H

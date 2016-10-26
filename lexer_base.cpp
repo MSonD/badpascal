@@ -1,5 +1,22 @@
 #include "lexer.h"
 #include <iostream>
+#include <assert.h>
+const unsigned AtomTypeIndex [] = {
+  static_cast<unsigned>(I_INDEXES::KEYWORD),
+  static_cast<unsigned>(I_INDEXES::ID),
+  static_cast<unsigned>(I_INDEXES::TYPE),
+  static_cast<unsigned>(I_INDEXES::FUNCTION),
+  static_cast<unsigned>(I_INDEXES::PROCEDURE),
+  static_cast<unsigned>(I_INDEXES::A_OPERATOR),
+  static_cast<unsigned>(I_INDEXES::R_OPERATOR),
+  static_cast<unsigned>(I_INDEXES::SPECIAL),
+  static_cast<unsigned>(I_INDEXES::INT_LITERAL),
+  static_cast<unsigned>(I_INDEXES::FLT_LITERAL),
+  static_cast<unsigned>(I_INDEXES::STRING),
+  static_cast<unsigned>(I_INDEXES::ASSIGNMENT),
+  static_cast<unsigned>(I_INDEXES::END)
+};
+
 //Constructor con argumento entero
 Token::Token():type(-1),id(0),pos(-1){}
 Token::Token(unsigned int type_, long id_, unsigned int pos_):
@@ -9,6 +26,80 @@ type(type_), id(id_), pos(pos_)
 Token::Token(unsigned int type_, double id_, unsigned int pos_):
 type(type_), idf(id_), pos(pos_)
 {}
+
+Atom Token::atom()
+{
+  switch (type){
+    case TYPE:
+    case PROCEDURE:
+    case R_OPERATOR:
+    case KEYWORD:
+      return AtomTypeIndex[type]+id;
+    case INT_LITERAL:
+    case FLT_LITERAL:
+    case ID:
+    case STRING:
+    case ASSIGNMENT:
+      return AtomTypeIndex[type];
+    case SPECIAL:
+      unsigned off;
+      switch(id){
+	case '(':
+	  off  = 0;
+	  break;
+	case ')':
+	  off =  1;
+	  break;
+	case '[':
+	  off =  2;
+	  break;
+	case ']':
+	  off = 3;
+	  break;
+	case ',':
+	  off = 4;
+	  break;
+	case ';':
+	  off = 5;
+	  break;
+	case ':':
+	  off = 6;
+	  break;
+	case '.':
+	  off = 7;
+	  break;
+	default:
+	  off = 8;
+	  assert(0);
+	  //THIS DOES NOT HAPPEN
+      }
+      return AtomTypeIndex[type]+off;
+      break;
+    case A_OPERATOR:
+      switch(id){
+	case '+':
+	  off  = 0;
+	  break;
+	case '-':
+	  off =  1;
+	  break;
+	case '*':
+	  off =  2;
+	  break;
+	case '/':
+	  off = 3;
+	  break;
+	default:
+	  off = 4;
+	  assert(0);
+	  //THIS SHOULD NOT EVER HAPPEN
+      }
+      return AtomTypeIndex[type]+off;
+    default:
+	//THIS IS BAD
+	assert(0);
+  }
+}
 
 std::ostream& operator<< (std::ostream &os,const Token& tok){
   switch(tok.type){

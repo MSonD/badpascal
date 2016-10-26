@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <initializer_list>
 /*
 template <class T>
 using Vector = std::vector<T>;
@@ -31,6 +32,16 @@ public:
     std::copy(other.begin(),other.end(),begin());
   }
   
+  Vector(Vector<T>&& other) : vsize(other.vsize),vsize(other.vcapacity),vdata(other.vdata){
+    
+  }
+  
+  Vector(std::initializer_list<T> ini) : Vector(ini.size()){
+    for(auto& e : ini){
+      push_back(e);
+    }
+  }
+  
   
   friend void swap ( Vector<T> &one, Vector<T> &other ){
     using std::swap;
@@ -41,6 +52,14 @@ public:
   
   Vector& operator=(Vector other){
     swap(*this, other);
+    return *this;
+  }
+  
+  Vector& operator=(Vector&& other){
+    using std::swap;
+    vsize = other.vsize;
+    vcapacity = other.vcapacity;
+    vdata = other.vdata;
     return *this;
   }
   
@@ -95,6 +114,14 @@ public:
   size_type size() const{
     return vsize;
   }
+  T& peek(){
+    return data()[vsize-1];
+  }
+  T pop_back(){
+    size--;
+    return data()[vsize];
+  }
+  
   size_type capacity() const{
     return vcapacity;
   }
@@ -108,7 +135,7 @@ public:
   }
 private:
   void realloc(){
-    reserve(vcapacity*2);
+    reserve(vcapacity*2-(vcapacity>>2)*3-(vcapacity>>3));
   }
 };
 

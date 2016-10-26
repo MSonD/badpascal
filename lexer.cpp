@@ -30,6 +30,11 @@
   write_to.AutoString(typeID,keyID,string_out,tables);\
   string_out =  "";\
 }
+void TokenFilter::callback(void* ref)
+{
+  TokenFilter* ptr = reinterpret_cast<TokenFilter*> (ref);
+  
+}
 
 //Funcion productora de carácteres
 unsigned streamTestFun (std::istream& cin,CharBuffer &buffer){
@@ -44,6 +49,24 @@ unsigned streamTestFun (std::istream& cin,CharBuffer &buffer){
   //Señalar fin de archivo
   if(buffer.size() == 0) buffer.push_back('\0');
   return cin.gcount();
+}
+void TokenFilter::setContext(Context& arg){
+  context = &arg;
+}
+void TokenFilter::setBuilder(TokenPusher& arg){
+  write_to = &arg;
+}
+
+void TokenFilter::setSource(StreamFun arg){
+  read = arg;
+}
+
+TokenHandle TokenFilter::handle(){
+  return TokenHandle{&callback,this,write_to->result(),mux};
+}
+
+void TokenFilter::run(){
+  lex_stream (read,*write_to, *context);
 }
 //Función analisis léxico
 void lex_stream (StreamFun read,TokenPusher &write_to, Context& tables){
@@ -118,6 +141,7 @@ F_FSM_default:
       F_FSM_REQUEST_CHARACTER(cur);
       goto F_FSM_string;
     default:
+      if(!std::isspace(cur))
       std::cerr << "carácter " << cur << "extraño.\n";
       //TODO: error
   }

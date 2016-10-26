@@ -52,14 +52,16 @@ public:
     line++;
   }
   void printTokens(std::ostream& cout){
-    cout << "#\tValor\tID\tClase\n";
+    cout << "#\tValor\tID\tClase\tIDAtomo\tAtomo\n";
     for(unsigned i = 0;i < list.size();i++){
       cout << i << '\t' << list[i] << '\t' << list[i].getID() <<'\t'<<
-	list[i].type << ':' << S_class_names[ list[i].type]<< '\n' ;
+	list[i].type << ':' << S_class_names[ list[i].type]<< '\t'<< list[i].atom()<< '\t' << S_atoms[list[i].atom()] <<'\n' ;
     }
     cout << std::endl;
   }
-  
+  TokenBuffer& result(){
+    return list;
+  }
 };
 
 void printStrings(std::ostream& cout, Context& context) {
@@ -77,41 +79,13 @@ void printIDs(std::ostream& cout,  Context& context) {
     }
     cout << std::endl;
 }
-#if  0
-int lmain(){
-  Vector<Token> tok;
-  tok.reserve(50);
-  tok.push_back(Token(2,1L,2));
-  tok.push_back(Token(2,1L,2));
-  tok.resize(50);
-  long i = 0;
-  for(auto &it : tok){
-    it = Token(1,i,1);
-    i++;
-  }
-  tok.push_back(Token(2,1L,2));
-  tok.resize(20);
-  for(auto &it : tok){
-    std::cout << it << std::endl;
-  }
-  //auto x = fun["GoE"];
-}
-//Q210
-int main(){
-  Hash2<std::string,unsigned> fun;
-  fun["GEE"] = 70;
-  fun["GOO"] = 71;
-  fun["GLEE"] = 72;
-  fun["GOETHE"] = 73;
-  fun["GOETHE"] = 173;
-  short ai;
-  for(auto it:fun){
-      std::cout<< *it.second << " ";
-  }
-  int i;
-}
+
+#ifdef TEST_MODE
+int main0 (int argc, char **argv, Context& context, TokenTester& default_out)
+#else
+int main (int argc, char **argv)
 #endif
-int main(int argc, char **argv) {
+ {
   
   //Seccion de manejo de archivo
   std::ostream* output;
@@ -153,15 +127,18 @@ int main(int argc, char **argv) {
   //Buffer de caracteres leidos
   CharBuffer p;
   //Tablas auxiliares
+#ifndef TEST_MODE
   Context context;
   //Consumidor de tokens
   TokenTester default_out;
+#endif
   //Reservar espacio para cadena
+  TokenFilter Tmachine;
+  Tmachine.setBuilder(default_out);
+  Tmachine.setContext(context);
+  Tmachine.setSource([input](CharBuffer &buffer){return streamTestFun(*input,buffer);});
   p.reserve(buffer_size);
-  //Realizar análisis lexico
-  lex_stream(
-    [input](CharBuffer &buffer){return streamTestFun(*input,buffer);},default_out,context
-  );
+  Tmachine.run();
   //Imprimir lista de tokens
   default_out.printTokens(*output);
   //Imprimir las otras tablas
@@ -169,4 +146,5 @@ int main(int argc, char **argv) {
   printStrings(*output,context);
   *output << "IDENTIFICADORES\n";
   printIDs(*output,context);
+
 }
