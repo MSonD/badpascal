@@ -36,7 +36,7 @@
 36	B → Q	q
 37	B → D	p
 38	I → s C h S O	s
-39	O → ε	; o k f
+39	O → ;	;
 40	O → o S	o
 41	R → @ S P k C	@
 42	Q → q C z S	q

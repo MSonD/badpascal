@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -95,10 +96,15 @@ class TokenAtomAdapter : public AtomSource{
   TokenBuffer local_buffer;
   bool finished_work = false;
   Token last;
+  size_t rbuffer_index = 0;
+  size_t nline = 0;
 public:
   void setHandle(TokenHandle hl){
     handle = hl;
     hl.rev_mux->lock();
+  }
+  unsigned line() {
+    return nline;
   }
   Atom fetch(){
     if(finished_work){
@@ -109,15 +115,21 @@ public:
 	Lock lock(*handle.mux);
 	swap(*(handle.data),local_buffer);
       }
+      rbuffer_index = 0;
       //TODO: REMOVE IN FINAL VERSION
       printTokens(std::cout);
     }
-    auto token = local_buffer.pop_back();
+    
+    auto token = local_buffer[rbuffer_index++];
+        nline = token.pos;
     if(token.type == Token::FEOF){
       handle.rev_mux->unlock();
       finished_work = true;
       last = token;
     }
+    if(rbuffer_index == local_buffer.size())
+      local_buffer.resize(0,false);
+    return token.atom();
   }
   void printTokens(std::ostream& cout){
     cout << "#\tValor\tID\tClase\tIDAtomo\tAtomo\n";

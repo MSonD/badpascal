@@ -109,11 +109,12 @@ public:
     return reinterpret_cast<T*>(vdata);
   }
   
-  void resize(size_type num_elem){
+  void resize(size_type num_elem, bool destructor = true){
     if(num_elem < vsize){
-      for(auto it = data()+num_elem; it != end();it++){
-	it->~T();
-      }
+      if(destructor)
+	for(auto it = data()+num_elem; it != end();it++){
+	  it->~T();
+	}
       vsize = num_elem;
       return;
     }

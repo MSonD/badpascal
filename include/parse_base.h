@@ -2,9 +2,16 @@
 #define PAS_BASEPARSE_H
 #include <initializer_list>
 #include <string>
+#include <iostream>
 #include "assert.h"
 #include "data.h"
 #include "lexer_base.h"
+template <class T>
+void printString(T str){
+  for(auto& s : str){
+    std::cout << S_atoms[s];
+  }
+}
 struct Entry{
 public:
   enum : unsigned char{
@@ -56,6 +63,7 @@ const std::string S_nsymbols [] = {
 class AtomSource{
 public:
   virtual Atom fetch() = 0;
+  virtual unsigned line() = 0;
 };
 
 class Parser

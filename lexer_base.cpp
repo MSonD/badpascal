@@ -42,6 +42,7 @@ Atom Token::atom()
     case STRING:
     case ASSIGNMENT:
     case FEOF:
+    case FUNCTION:
       return AtomTypeIndex[type];
     case SPECIAL:
       unsigned off;
@@ -99,7 +100,11 @@ Atom Token::atom()
       return AtomTypeIndex[type]+off;
     default:
 	//THIS IS BAD
+#ifndef NDEBUG
+      std::cerr << "TOKEN WITH UNKNOWN TYPE: " << type << std::endl;
 	assert(0);
+#endif
+	break;
   }
 }
 

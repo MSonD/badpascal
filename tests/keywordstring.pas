@@ -1,41 +1,19 @@
-AND
-1
-0
-MOD
-1
-ARRAY
-11
-NOT 2
+PROGRAM identif (input);
+(*** no va esto *)
+VAR a, b: integer;
+   gg: integer;
 BEGIN
-e
-12
-OR
-3
-DIV
-13
-PROGRAM
-4
-DO
-14
-REPEAT
-5
-DOWNTO
-15
-THEN
-6
-ELSE
-16
-TO
-7
-END
-17
-UNTIL
-8
-FOR
-18
-VAR
-9
-IF
-19
-WHILE
-:=
+  a:=5;
+  b:=a +3;
+  IF a >= 18 THEN
+  BEGIN
+    b := 40
+  END;; (*la sintaxis de else es obtusa por el cambio*)
+  writeln ('salida  ');
+  IF a = 60 THEN
+	x := 0 ; ; 
+  FOR x:= 0xDEAD DOWNTO 6 DO
+  BEGIN
+	writeln('')
+  END
+END.
