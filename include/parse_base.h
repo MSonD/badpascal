@@ -2,20 +2,27 @@
 #define PAS_BASEPARSE_H
 #include <initializer_list>
 #include <string>
+#include "assert.h"
 #include "data.h"
 #include "lexer_base.h"
 struct Entry{
-  unsigned char flags = 0;
-  unsigned char replace = 0;
-  enum flags: unsigned char{
+public:
+  enum : unsigned char{
     POP = 1,
     STOP = 2,
-    FINISH = 4,
+    REPLACE = 4,
+    FORWARD = 8,
+    FINISH = 16,
   };
+  unsigned char flags = 0;
+  unsigned char replace = 0;
+  Entry(unsigned char, unsigned char);
+  Entry();
 };
 
 const std::string S_nsymbols [] = {
   "M",
+  "N",
   "V",
   "H",
   "D'",
@@ -53,6 +60,7 @@ public:
 
 class Parser
 {
+protected:
   AtomSource* source;
   using E = Entry;
   Vector<Entry> table;
@@ -63,7 +71,8 @@ class Parser
   void pushString(const std::string&);
 public:
   void setSource(AtomSource& src);
-  void step();
+  bool step();
+  void operator()();
 };
 
 #endif // PARSE_H

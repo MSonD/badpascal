@@ -1,0 +1,69 @@
+1	M → # a ( a H ) ; N .	#
+2	N → V K	v
+3	N → K	e
+4	V → v a H : D' ; G	v
+5	H → , a H	,
+6	H → ε	) :
+7	D' → i J	i
+8	D' → r J	r
+9	D' → b J	b
+10	D' → c J	c
+11	J → y [ n ]	y
+12	J → ε	;
+13	G → a H : D' ; G	a
+14	G → ε	e
+15	S → A	a
+16	S → L	l t
+17	S → W	w m
+18	S → K	e
+19	S → B	s q @ p
+20	A → a = E	a
+21	L → l ( a H )	l
+22	L → t ( a H )	t
+23	W → w ( U )	w
+24	W → m X	m
+25	U → a Y	a
+26	U → " Y	"
+27	Y → , U	,
+28	Y → ε	)
+29	X → ε	; o k f
+30	X → ( U )	(
+31	K → e S P f	e
+32	P → ; S P	;
+33	P → ε	k f
+34	B → I	s
+35	B → R	@
+36	B → Q	q
+37	B → D	p
+38	I → s C h S O	s
+39	O → ε	; o k f
+40	O → o S	o
+41	R → @ S P k C	@
+42	Q → q C z S	q
+43	D → p A Z E z S	p
+44	Z → j	j
+45	Z → d	d
+46	E → T E'	( a ! n x
+47	E' → + T E'	+
+48	E' → - T E'	-
+49	E' → | T E'	|
+50	E' → ε	< _ ¿ ? > $ ) z h j d ; o k f
+51	T → F T'	( a ! n x
+52	T' → * F T'	*
+53	T' → / F T'	/
+54	T' → \ F T'	\
+55	T' → % F T'	%
+56	T' → & F T'	&
+57	T' → ε	+ - | < _ ¿ ? > $ ) z h j d ; o k f
+58	F → ( E )	(
+59	F → a	a
+60	F → ! a	!
+61	F → n	n
+62	F → x	x
+63	C → E R' E	( a ! n x
+64	R' → <	<
+65	R' → _	_
+66	R' → ¿	¿
+67	R' → ?	?
+68	R' → >	>
+69	R' → $	$

@@ -31,6 +31,7 @@ public:
   virtual void Special(unsigned type, unsigned subtype) = 0;
   void AutoString (unsigned type, long id, const std::string& string, Context &tables);
   virtual void Endl() = 0;
+  virtual void Eof() = 0;
   virtual TokenBuffer& result() = 0;
 };
 

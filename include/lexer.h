@@ -15,15 +15,12 @@ void lex_stream (StreamFun read,  TokenPusher& write_to, Context& tables);
 class TokenFilter{
   Context* context;
   TokenPusher* write_to;
-  std::mutex mux;
   StreamFun read;
 public:
   void setContext(Context&);
   void setBuilder(TokenPusher&);
   void setSource(StreamFun);
-  static void callback(void* ref);
-  void run();
-  TokenHandle handle();
+  void operator()();
 };
 
 #endif

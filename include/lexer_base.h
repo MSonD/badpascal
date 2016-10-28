@@ -37,7 +37,8 @@ const std::string S_class_names[] = {
   "INT_LIT",
   "FLT_LIT",
   "STRING",
-  "ASSIGN"
+  "ASSIGN",
+  "EOF"
 };
 //Nombre de palabras clave
 const std::string  S_keywords []= {
@@ -82,7 +83,8 @@ const std::string S_atoms [] = {
   "n",
   "x",
   "\"",
-  "="
+  "=",
+  "⊢"
 };
 
 enum class I_INDEXES :  unsigned{
@@ -98,6 +100,7 @@ enum class I_INDEXES :  unsigned{
   FLT_LITERAL,
   STRING,
   ASSIGNMENT,
+  FEOF,
   END
 };
 
@@ -117,7 +120,8 @@ class Token{
     INT_LITERAL,
     FLT_LITERAL,
     STRING,
-    ASSIGNMENT
+    ASSIGNMENT,
+    FEOF
   };
   unsigned type;
   unsigned pos;
@@ -137,10 +141,9 @@ class Token{
  using TokenBuffer = Vector<Token>;
  
  struct TokenHandle{
-   void (*callback)(void*);
-   void* _userdata;
-   TokenBuffer& data;
-   std::mutex& mux;
+   TokenBuffer* data;
+   std::mutex* mux;
+   std::mutex* rev_mux;
  };
 
  

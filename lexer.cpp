@@ -30,11 +30,7 @@
   write_to.AutoString(typeID,keyID,string_out,tables);\
   string_out =  "";\
 }
-void TokenFilter::callback(void* ref)
-{
-  TokenFilter* ptr = reinterpret_cast<TokenFilter*> (ref);
-  
-}
+
 
 //Funcion productora de carácteres
 unsigned streamTestFun (std::istream& cin,CharBuffer &buffer){
@@ -61,11 +57,9 @@ void TokenFilter::setSource(StreamFun arg){
   read = arg;
 }
 
-TokenHandle TokenFilter::handle(){
-  return TokenHandle{&callback,this,write_to->result(),mux};
-}
 
-void TokenFilter::run(){
+
+void TokenFilter::operator()(){
   lex_stream (read,*write_to, *context);
 }
 //Función analisis léxico
@@ -120,6 +114,7 @@ F_FSM_default:
       break;
     case '0':
       F_FSM_REQUEST_CHARACTER(cur);
+      
       goto F_FSM_zero;
     case '1':
     case '2':
@@ -134,6 +129,7 @@ F_FSM_default:
       F_FSM_REQUEST_CHARACTER(cur);
       goto F_FSM_numeric;
     case '\0':
+      write_to.Eof();
       return;
       break;
     case '\'':

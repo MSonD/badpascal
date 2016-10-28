@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <initializer_list>
+#include "assert.h"
 /*
 template <class T>
 using Vector = std::vector<T>;
@@ -32,9 +33,9 @@ public:
     std::copy(other.begin(),other.end(),begin());
   }
   
-  Vector(Vector<T>&& other) : vsize(other.vsize),vsize(other.vcapacity),vdata(other.vdata){
-    
-  }
+//   Vector(Vector<T>&& other) : vsize(other.vsize),vcapacity(other.vcapacity),vdata(other.vdata){
+//     
+//   }
   
   Vector(std::initializer_list<T> ini) : Vector(ini.size()){
     for(auto& e : ini){
@@ -45,9 +46,19 @@ public:
   
   friend void swap ( Vector<T> &one, Vector<T> &other ){
     using std::swap;
+    auto tmp = one.vsize;
+    one.vsize = other.vsize;
+    other.vsize = tmp;
+    tmp = one.vcapacity;
+    one.vcapacity = other.vcapacity;
+    other.vcapacity = tmp;
+    auto ptr = one.vdata;
+    one.vdata = other.vdata;
+    other.vdata = ptr;
+/*    
     swap(one.vsize,other.vsize);
     swap(one.vcapacity,other.vcapacity);
-    swap(one.vdata,other.vdata);
+    swap(one.vdata,other.vdata);*/
   }
   
   Vector& operator=(Vector other){
@@ -55,13 +66,13 @@ public:
     return *this;
   }
   
-  Vector& operator=(Vector&& other){
-    using std::swap;
-    vsize = other.vsize;
-    vcapacity = other.vcapacity;
-    vdata = other.vdata;
-    return *this;
-  }
+//   Vector& operator=(Vector&& other){
+//     using std::swap;
+//     vsize = other.vsize;
+//     vcapacity = other.vcapacity;
+//     vdata = other.vdata;
+//     return *this;
+//   }
   
   T& push_back(const T& elem){
     if(vsize == vcapacity){
@@ -114,11 +125,16 @@ public:
   size_type size() const{
     return vsize;
   }
+  size_type siz() const{
+    return vsize-1;
+  }
   T& peek(){
+    assert(vsize > 0);
     return data()[vsize-1];
   }
   T pop_back(){
-    size--;
+    assert(vsize > 0);
+    vsize--;
     return data()[vsize];
   }
   
@@ -131,6 +147,7 @@ public:
     for(auto &it : *this){
       it.~T();
     }
+    //BUG: PLZ FIX MEMORY LEAK
     delete [] vdata;
   }
 private:

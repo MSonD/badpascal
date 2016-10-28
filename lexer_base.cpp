@@ -14,6 +14,7 @@ const unsigned AtomTypeIndex [] = {
   static_cast<unsigned>(I_INDEXES::FLT_LITERAL),
   static_cast<unsigned>(I_INDEXES::STRING),
   static_cast<unsigned>(I_INDEXES::ASSIGNMENT),
+  static_cast<unsigned>(I_INDEXES::FEOF),
   static_cast<unsigned>(I_INDEXES::END)
 };
 
@@ -40,6 +41,7 @@ Atom Token::atom()
     case ID:
     case STRING:
     case ASSIGNMENT:
+    case FEOF:
       return AtomTypeIndex[type];
     case SPECIAL:
       unsigned off;
@@ -139,6 +141,8 @@ std::ostream& operator<< (std::ostream &os,const Token& tok){
     case Token::ASSIGNMENT:
       os << ":=";
       break;
+    case Token::FEOF:
+      os << "«EOF»";
   }
   return os;
 }
