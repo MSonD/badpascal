@@ -21,7 +21,7 @@ class TokenTester : public TokenPusher{
   //Lista de tokens que se han reconocido
   Vector<Token> list;
   //linea actual
-  unsigned line = 0;
+  unsigned line = 1;
   //Vector2<int> test;
 public:
   void String(const std::string& string, Context &tables){
@@ -98,7 +98,7 @@ class TokenAtomAdapter : public AtomSource{
   bool finished_work = false;
   Token last;
   size_t rbuffer_index = 0;
-  size_t nline = 0;
+  size_t nline = 1;
 public:
   //Cambia el bufer con que se sincroniza
   void setHandle(TokenHandle hl){
@@ -214,8 +214,6 @@ int main (int argc, char **argv)
       std::cerr << "Uso: badpas [archivo_entrada] [archivo_salida]" << std::endl;
       return -1;
   }
-  //Buffer de caracteres leidos
-  CharBuffer p;
   //Tablas auxiliares
 #ifndef TEST_MODE
   Context context;
@@ -238,8 +236,6 @@ int main (int argc, char **argv)
   Tmachine.setContext(context);
   //Conectar fuente de tokens con fuente de cadenas
   Tmachine.setSource([input](CharBuffer &buffer){return streamTestFun(*input,buffer);});
-  //Reservar espacio para cadena
-  p.reserve(buffer_size);
   //Iniciar threads
   std::thread lexer(std::move(Tmachine));
   std::thread parser(std::move(Pmachine));

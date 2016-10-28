@@ -38,6 +38,11 @@ bool Parser::step()
   }
   
   if(flags & Entry::FINISH || head == static_cast<unsigned>(I_INDEXES::FEOF)){
+    if(stack.size() != 0){
+      std::cerr << "ERROR se llego a fin de archivo sin completar estructura del programa" 
+	"\n se esperaba " << stringOfAtom(stack.peek()) << std::endl;
+      failure = true;
+    }
     return false;
   }
   

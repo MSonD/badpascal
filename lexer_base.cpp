@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include <iostream>
+#include <fstream>
 #include <assert.h>
 //Arreglo de indices para las difrerentes clases de tokens/atomos
 const unsigned AtomTypeIndex [] = {

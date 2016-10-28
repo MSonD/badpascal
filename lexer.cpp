@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "lexer.h"
 #include "lexer_base.h"
 #include "symtable.h"
@@ -14,8 +15,8 @@
 #define F_FSM_REQUEST_CHARACTER(cur) {\
   if(buffer_i == buffer.end()){\
     read(buffer);\
-    if(!buffer.size()){\
-      buffer.push_back('\0');\
+    if(buffer.size()==0){\
+      buffer.push_back('\x03');\
     }\
     buffer_i = buffer.begin();\
     cur = *buffer_i;\
@@ -31,20 +32,26 @@
   string_out =  "";\
 }
 
-
 //Funcion productora de carácteres
 unsigned streamTestFun (std::istream& cin,CharBuffer &buffer){
+  
   //asegurar que el buffer sea del tamaño correcto
   buffer.resize(buffer_size);
   //Limpiar banderas del la entrada (no tiene uso en este contexto, por ahora)
-  cin.clear();
   //Leer máximo, el tamaño del buffer;
+  
   cin.read(buffer.data(), buffer_size);
+
+  
   //Reducir extensioón del buffer, al numero de carácteres recibidos
-  buffer.resize(cin.gcount());
+  auto num = cin.gcount();
+  
+  //4 HORAS!!!!!, el estandar no decia que se añadía \0 al final de cadena
+  if(num >0)
+    buffer.resize(num-1);
+  else buffer.resize(0);
   //Señalar fin de archivo
-  if(buffer.size() == 0) buffer.push_back('\0');
-  return cin.gcount();
+  return num;
 }
 void TokenFilter::setContext(Context& arg){
   context = &arg;
@@ -116,6 +123,9 @@ F_FSM_default:
       F_FSM_REQUEST_CHARACTER(cur);
       
       goto F_FSM_zero;
+    case '\x03':
+      write_to.Eof();
+      return;
     case '1':
     case '2':
     case '3':
@@ -128,8 +138,6 @@ F_FSM_default:
       F_FSM_STORE_CHAR(cur);
       F_FSM_REQUEST_CHARACTER(cur);
       goto F_FSM_numeric;
-    case '\0':
-      write_to.Eof();
       return;
       break;
     case '\'':
@@ -137,7 +145,7 @@ F_FSM_default:
       F_FSM_REQUEST_CHARACTER(cur);
       goto F_FSM_string;
     default:
-      if(!std::isspace(cur))
+      if(!(std::isspace(cur) || cur == '\0'))
       std::cerr << "carácter " << cur << "extraño.\n";
       //TODO: error
   }
