@@ -1,5 +1,6 @@
 #include "include/parser.h"
 #include <iostream>
+//Carga la información de la tabla de parser
 PascalParser::PascalParser()
 {
   table.resize(static_cast<unsigned>(I_INDEXES::END) * (static_cast<unsigned>(I_INDEXES::END) + sizeof_a(S_nsymbols)));
@@ -100,37 +101,39 @@ PascalParser::PascalParser()
   //R'
   T(0x55,"\x25\x26\x27\x28\x29\x2a");
 }
+//Inserta elementos similares de un mismo atomo para un conjunto de seleccion
 inline void PascalParser::pushElements(Atom where, Entry e, const std::string& ss)
 {
   for(unsigned char i : ss)
     table[where*width+i] = e;
 }
-
 inline void PascalParser::pushElements(Atom where, Entry e, Atom ss)
 {
     table[where*width+ss] = e;
 }
-
+//Creea elementos para una regla epsilon
 inline void PascalParser::E(Atom where, const std::string& ss)
 {
   pushElements(where,{Entry::POP|Entry::STOP,0},ss);
 }
-
+//Creea elementos para una regla § -> a
 inline void PascalParser::T(Atom where, const std::__cxx11::string& ss)
 {
   pushElements(where,{Entry::POP|Entry::FORWARD,0},ss);
 }
-
+//Creea elementos para una § -> X
 void PascalParser::N(Atom where, Atom to, const std::string& ss)
 {
   replace_strings.push_back(std::string(1,static_cast<unsigned char>(to&0xFF)));
   pushElements(where,{Entry::REPLACE|Entry::STOP,(replace_strings.size()-1)},ss);
 }
-
+//Creea elementos para una regla § -> X Ω
 void PascalParser::NP(Atom where, const std::string& product, const std::string& ss)
 {
   pushElements(where,{Entry::REPLACE|Entry::STOP,store(product)},ss);
 }
+
+//Creea elementos para una regla § -> a Ω
 //RECUERDA QUE EL PRODUCTO NO DEBE CONTENER EL TERMINAL INICIAL; ESE VA EN SS
 void PascalParser::TP(Atom where, const std::string& product, const std::string& ss)
 {
@@ -139,17 +142,15 @@ void PascalParser::TP(Atom where, const std::string& product, const std::string&
 
 void PascalParser::TP(Atom where, const std::string& product)
 {
-  printString(product);
-  std::cerr<< std::endl;
   pushElements(where,{Entry::REPLACE|Entry::FORWARD,store(product.substr(1,std::string::npos))},product[0]);
 }
-
+//guarda una cadena en la lista de cadenas de remplazo
 unsigned PascalParser::store(const std::string& str)
 {
   replace_strings.push_back(str);
   return replace_strings.size()-1;
 }
-
+//Genera las entradas para los terminales
 void PascalParser::terminals()
 {
   for(unsigned i = 0; i < static_cast<unsigned>(I_INDEXES::END); i++)

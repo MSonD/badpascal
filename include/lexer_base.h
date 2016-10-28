@@ -46,6 +46,9 @@ const std::string  S_keywords []= {
 ,"IF","MOD","NOT","OR","PROGRAM","REPEAT","THEN","TO","UNTIL"
 ,"VAR","WHILE"
 };
+const std::string  S__id []= {
+  "IDENTIFIER"
+};
 //Nombres de tipos
 const std::string S_types [] = {
 "boolean" ,"char", "integer", "real", "text"
@@ -71,6 +74,54 @@ const std::string  S_relational [] = {
   "<","<=","=","<>",">",">="
 };
 
+const std::string  S__int []= {
+  "INT"
+};
+const std::string  S__float []= {
+  "FLOAT"
+};
+const std::string  S__string []= {
+  "STRING"
+};
+const std::string  S__assign []= {
+  "ASSIGN"
+};
+const std::string  S__eof []= {
+  "END OF FILE"
+};
+
+const std::string S_namesymbols[] = {
+  "Inicio de programa",//   "M",
+  "Pre-declaración",//   "N",
+  "Declaración",//   "V",
+  "Lista variables",//   "H",
+  "Tipo variable",//   "D'",
+  "Modificador de variable",//   "J",
+  "Lista variables",//   "G",
+  "Sentencia",//   "S",
+  "Sentencia asignación",//   "A",
+  "Sentencia procedimiento",//   "L",
+  "Write",//   "W",
+  "Lista writ",//   "U",
+  "Lista write",//   "Y",
+  "Writeln",//   "X",
+  "Sentencia compuesta",//   "K",
+  "Sentencia compuesta",//   "P",
+  "Sentencia de bloque",//   "B",
+  "Sentencia if",//   "I",
+  "Sentencia else",//   "O",
+  "Sentencia repeat",//   "R",
+  "Sentencia while",//   "Q",
+  "Sentencia for",//   "D",
+  "Up/Downto",//   "Z",
+  "Expresion",//   "E",
+  "Expresion",//   "E'",
+  "Expresión",//   "T",
+  "Expresión",//   "T'",
+  "Elemento de expresión",//   "F",
+  "Condición",//   "C",
+  "Operador comparación"//   "R'"
+};
 const std::string S_atoms [] = {
   "&", "y", "e", "\\", "z", "d", "o", "f", "p", "s", "%", "!", "|", "#", "@", "h", "j", "k", "v", "q",
   "a",
@@ -134,6 +185,7 @@ enum class I_INDEXES :  unsigned{
   END
 };
 
+const std::string& stringOfAtom(Atom);
 
 class Token{
   public:

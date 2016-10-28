@@ -1,0 +1,141 @@
+ 
+M -> # a ( a H ) ; N .
+ 
+N -> V K
+ 
+N -> K
+ 
+V -> v a H : D’ ; G
+ 
+H -> comma a H
+ 
+H -> EPSILON
+ 
+D’ -> i J
+ 
+D’ -> r J
+ 
+D’ -> b J
+ 
+D’ -> c J
+ 
+J -> y [ n ]
+ 
+J -> EPSILON
+ 
+G -> a H : D’ ; G
+ 
+G -> EPSILON
+ 
+S -> A
+ 
+S -> L
+ 
+S -> W
+ 
+S -> K
+ 
+S -> B
+ 
+A -> a = E
+ 
+L -> l ( a H )
+ 
+L -> t ( a H )
+ 
+W -> w ( U )
+ 
+W -> m X
+ 
+U -> a Y
+
+U -> “ Y
+ 
+Y -> comma U
+ 
+Y -> EPSILON
+ 
+X -> EPSILON
+ 
+X -> ( U )
+ 
+K -> e S P f
+ 
+P -> ; S P
+ 
+P -> EPSILON
+ 
+B -> I
+ 
+B -> R
+
+
+
+ B -> Q 
+ 
+B -> D  
+ 
+I -> s C h S O 
+ 
+O -> EPSILON
+
+ O -> o S 
+ 
+R -> @ S P k C
+ 
+ Q-> q C z S
+  
+D -> p A Z E z S
+  
+Z -> j 
+ 
+Z -> d 
+ 
+E -> T E’ 
+ 
+E’ -> + T E’
+ 
+ E’-> - T E’ 
+
+ E’-> vbar T E’ 
+ 
+E’ -> EPSILON 
+ 
+T -> F T’
+  
+T’ -> * F T’ 
+ 
+T’ -> / F T’ 
+ 
+T’ -> \ F T’ 
+ 
+T’ -> % F T’ 
+
+ T’ -> & F T’
+ 
+ T’ -> EPSILON
+  
+F -> ( E ) 
+
+F -> a 
+ 
+F -> ! a 
+
+ F -> n 
+ 
+F -> x 
+ 
+C -> E R’ E 
+ 
+R’ -> < 
+ 
+R’ -> _ 
+ 
+R’ -> ¿ 
+ 
+R’ -> ? 
+ 
+R’ -> >
+  
+R’ -> a$
+

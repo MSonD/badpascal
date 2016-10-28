@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include <iostream>
 #include <assert.h>
+//Arreglo de indices para las difrerentes clases de tokens/atomos
 const unsigned AtomTypeIndex [] = {
   static_cast<unsigned>(I_INDEXES::KEYWORD),
   static_cast<unsigned>(I_INDEXES::ID),
@@ -28,6 +29,7 @@ Token::Token(unsigned int type_, double id_, unsigned int pos_):
 type(type_), idf(id_), pos(pos_)
 {}
 
+//Crea un atomo del token
 Atom Token::atom()
 {
   switch (type){
@@ -108,6 +110,7 @@ Atom Token::atom()
   }
 }
 
+//Imprime un token
 std::ostream& operator<< (std::ostream &os,const Token& tok){
   switch(tok.type){
     case Token::KEYWORD:
@@ -157,4 +160,31 @@ unsigned int Token::getID()
   if(type != Token::INT_LITERAL && type !=  Token::FLT_LITERAL)
     return id;
   return 0;
+}
+
+const std::string* S_global_index  [] = {
+  S_keywords,
+  S__id,
+  S_types,
+  S_functions,
+  S_procedures,
+  S_arith,
+  S_relational,
+  S_special,
+  S__int,
+  S__float,
+  S__string,
+  S__assign,
+  S__eof
+};
+//String de un átomo
+const std::string& stringOfAtom(Atom at)
+{
+  int i = 0;
+  for( i = 0; i < sizeof_a(AtomTypeIndex)-1;i++){
+    if(at < AtomTypeIndex[i+1]){
+      return S_global_index[i][at-AtomTypeIndex[i]];
+    }
+  }
+  return S_namesymbols[at - static_cast<unsigned>(I_INDEXES::END) ];
 }

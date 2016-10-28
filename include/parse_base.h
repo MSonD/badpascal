@@ -12,6 +12,7 @@ void printString(T str){
     std::cout << S_atoms[s];
   }
 }
+//Tipo del elemento de la tabla de parser
 struct Entry{
 public:
   enum : unsigned char{
@@ -59,7 +60,7 @@ const std::string S_nsymbols [] = {
   "C",
   "R'"
 };
-
+//Un origen del cual se obtienen átomos
 class AtomSource{
 public:
   virtual Atom fetch() = 0;
@@ -76,11 +77,12 @@ protected:
   Vector<Atom> stack;
   size_t width;
   Atom head;
+  bool failure = false;
   void pushString(const std::string&);
 public:
   void setSource(AtomSource& src);
   bool step();
-  void operator()();
+  bool operator()();
 };
 
 #endif // PARSE_H

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <bitset>
 
+//Un paso del parser
 bool Parser::step()
 { 
   
@@ -41,7 +42,8 @@ bool Parser::step()
   }
   
   if(flags == 0){
-    std::cerr << "ERROR linea " << source->line() << " Atómo " << S_atoms[stack.peek()] << " no esperaba " << S_atoms[head] << std::endl;
+    std::cerr << "ERROR linea " << source->line() << " Atómo " << stringOfAtom(stack.peek()) << " no esperaba " << stringOfAtom(head) << std::endl;
+    failure = true;
     head = source->fetch();
 #ifndef NDEBUG
     printString(stack);
@@ -52,25 +54,28 @@ bool Parser::step()
   return true;
 }
 
-void Parser::operator()()
+//Ejecuta el Parser
+bool Parser::operator()()
 {
   head = source->fetch();
   while(step()){}
-  
+  std::cerr << (failure? "NO ACEPTADO" : "ACEPTADO") << std::endl;
+  return failure;
 }
-
+//Push una cadena de simbolos al stack
 void Parser::pushString(const std::string& string)
 {
   for(unsigned i = string.size(); i != 0 ;i--){
     stack.push_back(string[i-1]);
   }
 }
-
+//Cambiar origen de los atomos
 void Parser::setSource(AtomSource& src)
 {
   source = &src;
 }
 
+//Constructores del elelmento de la tabla
 Entry::Entry(unsigned char falags, unsigned char reaplace): flags(falags), replace(reaplace)
 {
 }

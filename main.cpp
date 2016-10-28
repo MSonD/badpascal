@@ -21,7 +21,7 @@ class TokenTester : public TokenPusher{
   //Lista de tokens que se han reconocido
   Vector<Token> list;
   //linea actual
-  unsigned line;
+  unsigned line = 0;
   //Vector2<int> test;
 public:
   void String(const std::string& string, Context &tables){
@@ -89,9 +89,10 @@ public:
     termination_mux.unlock();
   }
 };
-
+//Interface entre el buffer de tokens y el parser, que lee de uno por uno
 class TokenAtomAdapter : public AtomSource{
   using Lock = std::lock_guard<std::mutex>;
+  std::ostream* out = nullptr;
   TokenHandle handle;
   TokenBuffer local_buffer;
   bool finished_work = false;
@@ -99,49 +100,60 @@ class TokenAtomAdapter : public AtomSource{
   size_t rbuffer_index = 0;
   size_t nline = 0;
 public:
+  //Cambia el bufer con que se sincroniza
   void setHandle(TokenHandle hl){
     handle = hl;
     hl.rev_mux->lock();
   }
+  //Linea actual
   unsigned line() {
     return nline;
   }
+  void setOutput(std::ostream& stream){
+    out = &stream;
+  }
+  //Trae un token
   Atom fetch(){
     if(finished_work){
       return last.atom();
     }
     while(local_buffer.size() == 0){
-      {
+      {//TODO: eliminar busy-wait mientras se llena el buffer (si eso eso realmente llega a pasar)
 	Lock lock(*handle.mux);
 	swap(*(handle.data),local_buffer);
       }
       rbuffer_index = 0;
       //TODO: REMOVE IN FINAL VERSION
-      printTokens(std::cout);
+      //La tabla de tokens es efímera
+      printTokens();
     }
     
     auto token = local_buffer[rbuffer_index++];
-        nline = token.pos;
+
+    nline = token.pos;
+    last = token;
+
     if(token.type == Token::FEOF){
       handle.rev_mux->unlock();
       finished_work = true;
-      last = token;
     }
     if(rbuffer_index == local_buffer.size())
       local_buffer.resize(0,false);
     return token.atom();
   }
-  void printTokens(std::ostream& cout){
+  //IMprime tabla
+  void printTokens(){
+    std::ostream& cout = *out;
     cout << "#\tValor\tID\tClase\tIDAtomo\tAtomo\n";
     for(unsigned i = 0;i < local_buffer.size();i++){
       cout << i << '\t' << local_buffer[i] << '\t' << local_buffer[i].getID() <<'\t'<<
-	local_buffer[i].type << ':' << S_class_names[ local_buffer[i].type]<< '\t'<< local_buffer[i].atom()<< '\t' << S_atoms[local_buffer[i].atom()] <<'\n' ;
+	local_buffer[i].type << ':' << S_class_names[ local_buffer[i].type]<< '\t'<< local_buffer[i].atom()<< '\t' << S_atoms[local_buffer[i].atom()] << '\t' <<local_buffer[i].pos <<'\n'  ;
     }
     cout << std::endl;
   }
 };
 
-
+//Imprime cadenas guardadas
 void printStrings(std::ostream& cout, Context& context) {
     cout << "#\tValor\n";
     for(auto elem : context.strs){
@@ -149,7 +161,7 @@ void printStrings(std::ostream& cout, Context& context) {
     }
     cout << std::endl;
 }
-
+//Imprime identificadores guardados
 void printIDs(std::ostream& cout,  Context& context) {
     cout << "#\tValor\n";
     for(auto elem : context.ids){
@@ -210,21 +222,30 @@ int main (int argc, char **argv)
   //Consumidor de tokens
   TokenTester default_out;
 #endif
-  //Reservar espacio para cadena
+  //Lexer
   TokenFilter Tmachine;
+  //Adaptador
   TokenAtomAdapter pipe;
+  pipe.setOutput(*output);
+  //Parser
   PascalParser Pmachine;
+  //Conectar adaptador con fuente de tokens
   pipe.setHandle(default_out.handle());
+  //Conectar parser conn adaptador
   Pmachine.setSource(pipe);
+  //Configurar fuente de tokens
   Tmachine.setBuilder(default_out);
   Tmachine.setContext(context);
-  
+  //Conectar fuente de tokens con fuente de cadenas
   Tmachine.setSource([input](CharBuffer &buffer){return streamTestFun(*input,buffer);});
+  //Reservar espacio para cadena
   p.reserve(buffer_size);
+  //Iniciar threads
   std::thread lexer(std::move(Tmachine));
   std::thread parser(std::move(Pmachine));
   parser.join();
   lexer.join();
+  
   //Imprimir lista de tokens
   //default_out.printTokens(*output);
   //Imprimir las otras tablas
@@ -232,5 +253,5 @@ int main (int argc, char **argv)
   printStrings(*output,context);
   *output << "IDENTIFICADORES\n";
   printIDs(*output,context);
-
+    
 }
